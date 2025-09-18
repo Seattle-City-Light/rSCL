@@ -57,6 +57,22 @@ print_connect_databases <- function(){
 
 
 
+#' print full credential table
+#'
+#' @export
+print_connect_cred_table <- function(){
+
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+
+  print(creds)
+
+}
+
+
+
+
+
 # get specific credentials for connection
 get_cred <- function(user = 'MATTHEW', database = 'CCB'){
 
@@ -140,7 +156,7 @@ delete_user_cred <- function(user = 'MATTHEW', database = 'CCB'){
   creds <- creds %>%
     filter(!(USER==user & DATABASE==database))
 
-  write_csv(creds, get_cred_path())
+  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
 }
 
@@ -169,7 +185,7 @@ add_user_cred <- function(user = 'MATTHEW',
   creds <- bind_rows(creds, temp_data) %>%
     arrange(USER)
 
-  write_csv(creds, get_cred_path())
+  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
 }
 
