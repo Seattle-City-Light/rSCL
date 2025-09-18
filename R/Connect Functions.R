@@ -25,7 +25,8 @@ get_cred_path <- function(){
 #' @export
 print_connect_users <- function(){
 
-  creds <- read.csv(get_cred_path())
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   user_list <- unique(creds$USER)
 
@@ -43,7 +44,8 @@ print_connect_users <- function(){
 #' @export
 print_connect_databases <- function(){
 
-  creds <- read.csv(get_cred_path())
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   databases <- unique(creds$DATABASE)
 
@@ -58,7 +60,8 @@ print_connect_databases <- function(){
 # get specific credentials for connection
 get_cred <- function(user = 'MATTHEW', database = 'CCB'){
 
-  creds <- read.csv(get_cred_path())
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   creds <- creds %>%
     filter(USER==user) %>%
@@ -131,7 +134,8 @@ scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
 # remove credentials for a specific user and database
 delete_user_cred <- function(user = 'MATTHEW', database = 'CCB'){
 
-  creds <- read_csv(get_cred_path())
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   creds <- creds %>%
     filter(!(USER==user & DATABASE==database))
@@ -152,7 +156,8 @@ add_user_cred <- function(user = 'MATTHEW',
                           keyring_username = 'HAMLINM_RO',
                           keyring_service = 'CCB'){
 
-  creds <- read_csv(get_cred_path())
+  #creds <- read.csv(get_cred_path())
+  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   temp_data <- data.frame(USER = user,
                           DATABASE = database,
