@@ -24,7 +24,7 @@ scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
 
   } else if(database %in% c('MSCS')){
 
-    connect_mscs(user)
+    return(connect_mscs(user))
 
   } else {
 
