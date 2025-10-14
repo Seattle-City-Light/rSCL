@@ -1,91 +1,7 @@
-# -----------------------------------------------------------------------------------
-# These functions provide the general connects in R sessions for common scl databases
-# -----------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# These functions provide the general connections for common scl databases
+# -----------------------------------------------------------------------------
 
-
-
-
-
-# defining location of user credential database
-get_cred_path <- function(){
-
-  user_cred_path <- "I:/FINANCE/FPU/RSCL/rscl/Connect User Credentials.csv"
-
-  return(user_cred_path)
-
-}
-
-
-
-
-
-
-#' Print known rscl connect users
-#'
-#' @export
-print_connect_users <- function(){
-
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
-
-  user_list <- unique(creds$USER)
-
-  print(user_list)
-
-}
-
-
-
-
-
-
-#' print known rscl databases
-#'
-#' @export
-print_connect_databases <- function(){
-
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
-
-  databases <- unique(creds$DATABASE)
-
-  print(databases)
-
-}
-
-
-
-
-
-#' print full credential table
-#'
-#' @export
-print_connect_cred_table <- function(){
-
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
-
-  print(creds)
-
-}
-
-
-
-
-
-# get specific credentials for connection
-get_cred <- function(user = 'MATTHEW', database = 'CCB'){
-
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
-
-  creds <- creds %>%
-    filter(USER==user) %>%
-    filter(DATABASE== database)
-
-  return(creds)
-
-}
 
 
 
@@ -98,65 +14,38 @@ get_cred <- function(user = 'MATTHEW', database = 'CCB'){
 #'
 #' @param user Name of user trying to connect to database
 #' @param database Name of database user is trying to connect to
-#' @return 0 if connecting to database directly or full credentials, including password for db like MSCS
+#' @return Prints if connection was successful or not also will return parameters for db like MSCS
 #' @export
 scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
 
   if(database %in% c('ACCELA')){
 
-    # no specific credentials needed for read only
-    con <<- dbConnect(odbc(),
-                      Driver = "SQL Server",
-                      Server = "ITDWAEPDW100", # prod
-                      Database = "SAAS_Reports",
-                      UID = "readonly",
-                      PWD = "readonly",
-                      Port = 1433)
-
-    return(0)
+    connect_accela()
 
   } else if(database %in% c('MSCS')){
 
-    creds <- get_cred(user,database)
-    creds$PASSWORD <- key_get(creds$KEYRING_SERVICE, creds$KEYRING_USERNAME, creds$KEYRING_NAME)
-    keyring_lock(keyring=creds$KEYRING_NAME)
-    return(creds)
+    connect_mscs(user)
 
   } else {
 
     # reading in users keyring credentials
-    creds <- get_cred(user,database)
+    creds <- get_connect_creds(user,database)
 
     # specify Oracle driver and establish connection -- need to use super assignment to global env
-    drv <<- JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar")
-    con <<- dbConnect(drv,
+    drv <<- RJDBC::JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar")
+    con <<- DBI::dbConnect(drv,
                       creds$SERVER,
                       creds$KEYRING_USERNAME,
-                      password=key_get(creds$KEYRING_SERVICE, creds$KEYRING_USERNAME, creds$KEYRING_NAME))
+                      password= keyring::key_get(creds$KEYRING_SERVICE, creds$KEYRING_USERNAME, creds$KEYRING_NAME))
 
     # lock keyring
-    keyring_lock(keyring=creds$KEYRING_NAME)
+    keyring::keyring_lock(keyring=creds$KEYRING_NAME)
 
-    return(0)
+    return("Connect Successful")
 
   }
 
-}
-
-
-
-
-
-# remove credentials for a specific user and database
-delete_user_cred <- function(user = 'MATTHEW', database = 'CCB'){
-
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
-
-  creds <- creds %>%
-    filter(!(USER==user & DATABASE==database))
-
-  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+  return("No known connection with provided user and database.")
 
 }
 
@@ -164,28 +53,18 @@ delete_user_cred <- function(user = 'MATTHEW', database = 'CCB'){
 
 
 
-# add a new user credential for a specific database
-add_user_cred <- function(user = 'MATTHEW',
-                          database = 'CCB',
-                          server = 'jdbc:oracle:thin:@//sclzcisdbprod100.light.ci.seattle.wa.us:1557/RPTPRD',
-                          keyring_name = 'MH',
-                          keyring_username = 'HAMLINM_RO',
-                          keyring_service = 'CCB'){
+# General connection to the Accela database. Doesn't require a username or password.
+connect_accela <- function(){
 
-  #creds <- read.csv(get_cred_path())
-  creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+  con <<- DBI::dbConnect(odbc(),
+                    Driver = "SQL Server",
+                    Server = "ITDWAEPDW100", # prod
+                    Database = "SAAS_Reports",
+                    UID = "readonly",
+                    PWD = "readonly",
+                    Port = 1433)
 
-  temp_data <- data.frame(USER = user,
-                          DATABASE = database,
-                          SERVER = server,
-                          KEYRING_NAME = keyring_name,
-                          KEYRING_USERNAME = keyring_username,
-                          KEYRING_SERVICE = keyring_service)
-
-  creds <- bind_rows(creds, temp_data) %>%
-    arrange(USER)
-
-  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+  return("Connect Successful")
 
 }
 
@@ -193,15 +72,17 @@ add_user_cred <- function(user = 'MATTHEW',
 
 
 
-# update keyring password for a database
-update_keyring <- function(keyring_name = "MH",
-                           keyring_service = "CCB",
-                           keyring_username = "HAMLINM_RO",
-                           keyring_password = ""){
+# gets the credentials for the mscs connect since this connection has to be done through a rest API
+connect_mscs <- function(user = 'MATTEHW'){
 
+  creds <- get_connect_creds(user,'MSCS')
 
-  key_set_with_value(service=kr_service, username=kr_username, password=kr_password, keyring=kr_name)
+  creds$PASSWORD <- keyring::key_get(creds$KEYRING_SERVICE, creds$KEYRING_USERNAME, creds$KEYRING_NAME)
 
-  keyring_lock(keyring_name)
+  keyring::keyring_lock(keyring=creds$KEYRING_NAME)
+
+  print("Connect Successful")
+
+  return(creds)
 
 }

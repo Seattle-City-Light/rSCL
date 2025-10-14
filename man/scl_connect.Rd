@@ -12,7 +12,7 @@ scl_connect(user = "MATTHEW", database = "CCB")
 \item{database}{Name of database user is trying to connect to}
 }
 \value{
-0 if connecting to database directly or full credentials, including password for db like MSCS
+Prints if connection was successful or not also will return parameters for db like MSCS
 }
 \description{
 This function establishes R session connection to databases like
