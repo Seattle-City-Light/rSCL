@@ -32,7 +32,7 @@ scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
     creds <- get_connect_creds(user,database)
 
     # specify Oracle driver and establish connection -- need to use super assignment to global env
-    drv <<- RJDBC::JDBC(driverClass="oracle.jdbc.OracleDriver", classPath="N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar")
+    drv <<- RJDBC::JDBC(driverClass="oracle.jdbc.OracleDriver", classPath=creds$JDBC_DRIVER_PATH)
     con <<- DBI::dbConnect(drv,
                       creds$SERVER,
                       creds$KEYRING_USERNAME,
@@ -56,7 +56,7 @@ scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
 # General connection to the Accela database. Doesn't require a username or password.
 connect_accela <- function(){
 
-  con <<- DBI::dbConnect(odbc(),
+  con <<- DBI::dbConnect(odbc::odbc(),
                     Driver = "SQL Server",
                     Server = "ITDWAEPDW100", # prod
                     Database = "SAAS_Reports",
