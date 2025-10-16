@@ -8,6 +8,7 @@ add_keyring_connection(
   user = "MATTHEW",
   database = "CCB",
   server = "jdbc:oracle:thin:@//sclzcisdbprod100.light.ci.seattle.wa.us:1557/RPTPRD",
+  jdbc_driver_path = "N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar",
   keyring_name = "MH",
   keyring_username = "HAMLINM_RO",
   keyring_service = "CCB",
