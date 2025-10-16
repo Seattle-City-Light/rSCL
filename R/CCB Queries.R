@@ -129,7 +129,7 @@ ccb_customer_mapping <- function(id = c(),
   }
 
   customer_map <- rbindlist(list)
-  customer_map <- trimws_custom(customer_map)
+  #customer_map <- trimws_custom(customer_map)
 
   return(customer_map)
 
