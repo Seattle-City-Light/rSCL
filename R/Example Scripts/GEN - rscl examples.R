@@ -58,6 +58,8 @@ print_keyring_connections() %>% clipr::write_clip()
 # re-installing rscl to get updated version
 devtools::install_github("Seattle-City-Light/rSCL")
 
+library('rscl')
+
 # uploading the backup keyring manager table
 upload_backup_connections(backup_dir = 'I:/FINANCE/FPU/Matthew/Keyring Manager Backup/RSCL Keyring Manager Backup.xlsx')
 

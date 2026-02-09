@@ -55,8 +55,8 @@ database <- 'EPMMART_RW'   # scl_connect fpustats database
 
 oprv_report <- fpustats_read_oprv(most_eff_dt = most_eff_dt,
                                   read_all = read_all,
-                                  scl_connect_user = user,
-                                  scl_connect_db = database)
+                                  user = user,
+                                  database = database)
 
 
 
@@ -71,5 +71,5 @@ database <- 'EPMMART_RW'   # scl_connect fpustats database
 
 oprv_report <- fpustats_read_oprv(most_eff_dt = most_eff_dt,
                                   read_all = read_all,
-                                  scl_connect_user = user,
-                                  scl_connect_db = database)
+                                  user = user,
+                                  database = database)
