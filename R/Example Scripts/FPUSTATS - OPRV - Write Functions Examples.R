@@ -21,7 +21,11 @@ fpustats_write_oprv_report(report_path = file_path,
                            database = db)
 
 
-
+check <- fpustats_read_oprv(year=2025,
+                             month = 12,
+                             most_eff_dt = F,
+                             user = user,
+                             database = db)
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -31,9 +35,9 @@ fpustats_write_oprv_report(report_path = file_path,
 # deleting 1 specific report from the database
 
 # specifying delete parameters
-year <- 2024           # year of report
-month <- 11             # month of report
-eff_dt <- '2026-02-05' # <- check this matches the uploaded eff_dt
+year <- 2025           # year of report
+month <- 12             # month of report
+eff_dt <- '2026-02-09' # <- check this matches the uploaded eff_dt
 connect <- T           # true for having the function handling the connect
 
 # These are the scl_connect() manager user and database for the FPUSTATS database
@@ -48,6 +52,11 @@ fpustats_delete_oprv_report(year = year,
 
 
 
+check <- fpustats_read_oprv(year=2025,
+                            month = 12,
+                            most_eff_dt = F,
+                            user = user,
+                            database = db)
 
 
 
