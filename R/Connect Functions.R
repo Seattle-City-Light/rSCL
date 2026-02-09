@@ -73,7 +73,7 @@ connect_accela <- function(){
 
 
 # gets the credentials for the mscs connect since this connection has to be done through a rest API
-connect_mscs <- function(user = 'MATTEHW'){
+connect_mscs <- function(user = 'MATTHEW'){
 
   creds <- get_connect_creds(user,'MSCS')
 

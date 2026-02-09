@@ -29,13 +29,14 @@ print_keyring_connections <- function(){
 #' @export
 delete_keyring_connection <- function(user = 'MATTHEW', database = 'CCB'){
 
-  #creds <- read.csv(get_cred_path())
+  `%>%` <- dplyr::`%>%`
+
   creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   creds <- creds %>%
-    filter(!(USER==user & DATABASE==database))
+    dplyr::filter(!(USER==user & DATABASE==database))
 
-  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+  readr::write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
 }
 
@@ -55,6 +56,8 @@ add_keyring_connection <- function(user = 'MATTHEW',
                           keyring_service = 'CCB',
                           keyring_password = ""){
 
+  `%>%` <- dplyr::`%>%`
+
   creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   temp_data <- data.frame(USER = user,
@@ -66,9 +69,9 @@ add_keyring_connection <- function(user = 'MATTHEW',
                           KEYRING_SERVICE = keyring_service)
 
   creds <- bind_rows(creds, temp_data) %>%
-    arrange(USER)
+    dplyr::arrange(USER)
 
-  write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
+  readr::write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   keyring::key_set_with_value(service=keyring_service,
                               username=keyring_username,
@@ -88,17 +91,19 @@ add_keyring_connection <- function(user = 'MATTHEW',
 #' @export
 update_keyring_password <- function(user = 'MATTHEW', database = 'CCB', password = ''){
 
+  `%>%` <- dplyr::`%>%`
+
   creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   creds <- creds %>%
-    filter(USER==user & DATABASE == database)
+    dplyr::filter(USER==user & DATABASE == database)
 
   keyring::key_set_with_value(service=creds$KEYRING_SERVICE,
                      username=creds$KEYRING_USERNAME,
                      keyring=creds$KEYRING_NAME,
                      password=password)
 
-  keyring::keyring_lock(keyring_name)
+  keyring::keyring_lock(creds$KEYRING_NAME)
 
 }
 
@@ -111,12 +116,32 @@ update_keyring_password <- function(user = 'MATTHEW', database = 'CCB', password
 #' @export
 get_connect_creds <- function(user = 'MATTHEW', database = 'CCB'){
 
-  #creds <- read.csv(get_cred_path())
+  `%>%` <- dplyr::`%>%`
+
   creds <- read.csv(system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   creds <- creds %>%
-    filter(USER == user) %>%
-    filter(DATABASE == database)
+    dplyr::filter(USER == user) %>%
+    dplyr::filter(DATABASE == database)
+
+  return(creds)
+
+}
+
+
+
+
+
+#' get specific credentials for connection
+#'
+#' @export
+upload_backup_connections <- function(backup_dir = 'I:/FINANCE/FPU/Matthew/Keyring Manager Backup/RSCL Keyring Manager Backup.xlsx'){
+
+  `%>%` <- dplyr::`%>%`
+
+  creds <- readxl::read_xlsx(backup_dir)
+
+  readr::write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
 
   return(creds)
 
