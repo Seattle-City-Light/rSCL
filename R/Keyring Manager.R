@@ -68,7 +68,7 @@ add_keyring_connection <- function(user = 'MATTHEW',
                           KEYRING_USERNAME = keyring_username,
                           KEYRING_SERVICE = keyring_service)
 
-  creds <- bind_rows(creds, temp_data) %>%
+  creds <- dplyr::bind_rows(creds, temp_data) %>%
     dplyr::arrange(USER)
 
   readr::write_csv(creds, system.file("extdata", "Connect User Credentials.csv", package = "rscl"))
