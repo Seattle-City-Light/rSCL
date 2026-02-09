@@ -21,6 +21,7 @@ scl_connect <- function(user = 'MATTHEW', database = 'CCB') {
   if(database %in% c('ACCELA')){
 
     connect_accela()
+    return("Connect Successful")
 
   } else if(database %in% c('MSCS')){
 
