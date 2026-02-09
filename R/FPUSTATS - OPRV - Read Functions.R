@@ -29,17 +29,17 @@ fpustats_read_oprv <- function(year = 2024,
   if(!read_all){
 
     oprv_reports <- oprv_reports %>%
-      filter(YEAR==year) %>%
-      filter(MONTH==month)
+      dplyr::filter(YEAR==year) %>%
+      dplyr::filter(MONTH==month)
 
   }
 
   if(most_eff_dt){
 
     oprv_reports <- oprv_reports %>%
-      arrange(desc(EFF_DT)) %>%
-      group_by(YEAR, MONTH, CLASS, RATE_CODE_GRP,QTY_TYPE) %>%
-      slice(1)
+      dplyr::arrange(desc(EFF_DT)) %>%
+      dplyr::group_by(YEAR, MONTH, CLASS, RATE_CODE_GRP,QTY_TYPE) %>%
+      dplyr::slice(1)
 
   }
 
