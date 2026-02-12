@@ -36,7 +36,7 @@ fpustats_read_average_rates_forecast <- function(forecast_vintage = 2026,
   if(most_eff_dt){
 
     avg_rates_forecast <- avg_rates_forecast %>%
-      dplyr::arrange(desc(EFF_DT)) %>%
+      dplyr::arrange(desc(EFF_DATE)) %>%
       dplyr::group_by(FORECAST_VINTAGE,YEAR, MONTH, RATE_CLASS, SERVICE_AREA, RATE_TYPE) %>%
       dplyr::slice(1)
 
