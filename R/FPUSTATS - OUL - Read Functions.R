@@ -1,6 +1,6 @@
 #' This function reads oul forecasts from the FPUSTATS Database
 #'
-#' @param fcast_vintage Which year's forecast are you interested in looking at
+#' @param forecast_vintage Which year's forecast are you interested in looking at
 #' @param year Year within the forecast of interest
 #' @param most_eff_dt T/F Do you want the most recently uploaded version of the forecast(s)
 #' @param read_all T/F Do you want all oul forecasts or not
