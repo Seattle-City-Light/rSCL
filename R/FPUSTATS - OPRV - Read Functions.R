@@ -14,11 +14,14 @@ fpustats_read_oprv <- function(year = 2024,
                                most_eff_dt = T,
                                read_all = F,
                                user = 'MATTHEW',
-                               database = 'EPMMART_RW'){
+                               database = 'EPMMART_RW',
+                               connect = T){
 
   `%>%` <- dplyr::`%>%`
 
-  scl_connect(user, database)
+  if(connect){
+    scl_connect(user, database)
+  }
 
   query <- "Select* From FPUSTATS.OPRV_REPORT"
 

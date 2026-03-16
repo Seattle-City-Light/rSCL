@@ -13,11 +13,14 @@ fpustats_read_streetlight_forecast <- function(forecast_vintage = 2026,
                                                most_eff_dt = T,
                                                read_all = F,
                                                user = 'MATTHEW',
-                                               database = 'EPMMART_RW'){
+                                               database = 'EPMMART_RW',
+                                               connect = T){
 
   `%>%` <- dplyr::`%>%`
 
-  scl_connect(user, database)
+  if(connect){
+    scl_connect(user, database)
+  }
 
   query <- "Select* From FPUSTATS.STREETLIGHT_FORECAST"
 

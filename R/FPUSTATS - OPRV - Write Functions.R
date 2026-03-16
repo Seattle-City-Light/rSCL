@@ -8,8 +8,14 @@
 #' @export
 fpustats_write_oprv_report <- function(report_path = 'I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OPRV/OPRV Files/2025-05 OPRV.xlsx',
                                        user = 'MATTHEW',
-                                       database = 'EPMMART_RW'){
+                                       database = 'EPMMART_RW',
+                                       connect = T){
+
   `%>%` <- dplyr::`%>%`
+
+  if(connect){
+    scl_connect(user, database)
+  }
 
   oprv_report <- readxl::read_xlsx(report_path)
 

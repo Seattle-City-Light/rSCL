@@ -8,8 +8,14 @@
 #' @export
 fpustats_write_oul_forecast <- function(forecast_path = "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OUL/2026 OUL Forecast.xlsx",
                                         user = 'MATTHEW',
-                                        database = 'EPMMART_RW'){
+                                        database = 'EPMMART_RW',
+                                        connect = T){
+
   `%>%` <- dplyr::`%>%`
+
+  if(connect){
+    scl_connect(user, database)
+  }
 
   oul_forecast <- readxl::read_xlsx(forecast_path)
 
@@ -21,7 +27,6 @@ fpustats_write_oul_forecast <- function(forecast_path = "I:/FINANCE/FPU/Sales an
     dplyr::select(FORECAST_VINTAGE, YEAR, MONTH, OWN_USE_AMW, LOSS_PCT) %>%
     dplyr::mutate(EFF_DT = toupper(as.character(format(Sys.Date(),"%d-%b-%y"))))
 
-  scl_connect(user, database)
 
   for(i in seq(1,nrow(oul_forecast))){
 
