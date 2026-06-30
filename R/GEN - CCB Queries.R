@@ -3,134 +3,100 @@
 
 #' CCB Query that maps most of a customers relevant data and identifiers
 #'
-#' After establishing a ccb connection using the scl_connect() function, this
-#' function given badge numbers, service agreements or account ids will map these ids
-#' each other and attach additional ids for service point, service agreement status
-#' and rate code
-#'
-#' @param id list of customer id's
-#' @param is_badge_num logical: True if the ids provided are badge numbers
-#' @param is_sa logical: True if the ids provided are service agreements
-#' @param is_acct_id logical: True if the ids provided are account numbers
-#' @param most_recent_rs logical: True if only interested in the most recent rate code for the customers
+#' @param ids list of customer id's
+#' @param id_type Name of the ID variable
 #' @return Data frame of all identifiers mapped together
 #' @export
-ccb_customer_mapping <- function(id = c(),
-                                 is_badge_num = F,
-                                 is_sa = F,
-                                 is_acct_id= F,
-                                 most_recent_rs = T){
+scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
+                                         id_type = 'PREM_ID'){
 
-  id_list <- create_list_of_vectors_of_specific_size(id, 1000)
-  list <- list()
+  scl_connect('CCB')
+
+  valid_id_types <- c('SA_ID',
+                      'PREM_ID',
+                      'ACCT_ID',
+                      'SP_ID',
+                      "BADGE_NBR")
+
+  if(!id_type %in% valid_id_types){
+
+    print('Please provide a valid id_type from this list:')
+    print(valid_id_types)
+
+    return()
+
+  }
+
+  list_of_vectors <- list()
+  num_items <- ceiling(length(ids)/1000)
+
+  for(i in seq(1:num_items)){
+
+    if(i != num_items){
+      list_of_vectors[[i]]= ids[seq(1000*(i-1)+1, 1000*i,1)]
+
+    }else{
+      list_of_vectors[[i]]= ids[seq(1000*(i-1)+1,length(ids),1)]
+    }
+  }
+
+
+  meta_list <- list()
   i <- 1
-  print(paste0("Query done when counter gets to: ", length(id_list)))
+  print(paste0("Pulling Meta Data for ",length(list_of_vectors),' bundle(s) of IDs.'))
 
-  for(ids in id_list){
+  for(id_bundle in list_of_vectors){
 
     print(i)
 
-    if(is_badge_num ){
+    q1 <- "SELECT mtr.BADGE_NBR, hst.REMOVAL_DTTM, mtr.RETIRE_DT,
+                 sp.SP_ID, sp.PREM_ID, sp.ABOLISH_DT,
+                 sasp.STOP_DTTM,
+                 sa.SA_ID, sa.SA_STATUS_FLG, sa.ACCT_ID,
+                 rs.RS_CD, rs.EFFDT
+           FROM CISADM.CI_MTR mtr,
+                CISADM.CI_MTR_CONFIG cfg,
+                CISADM.CI_SP_MTR_HIST hst,
+                CISADM.CI_SP sp,
+                CISADM.CI_SA_SP sasp,
+                CISADM.CI_SA sa,
+                CISADM.CI_SA_RS_HIST rs"
 
-      list[[i]] <- dbGetQuery(con, paste0("SELECT mtr.BADGE_NBR,
-                                                  hst.REMOVAL_DTTM,
-                                                  mtr.RETIRE_DT,
-                                                  mtr.SERIAL_NBR,
-                                                  hst.SP_ID,
-                                                  sa.SA_ID,
-                                                  sa.SA_STATUS_FLG,
-                                                  sa.ACCT_ID,
-                                                  rs.RS_CD,
-                                                  rs.EFFDT
-                                     FROM CISADM.CI_MTR mtr,
-                                          CISADM.CI_MTR_CONFIG cfg,
-                                          CISADM.CI_SP_MTR_HIST hst,
-                                          CISADM.CI_SA_SP sasp,
-                                          CISADM.CI_SA sa,
-                                          CISADM.CI_SA_RS_HIST rs
-                                     where mtr.BADGE_NBR in (", to_sql_list(ids),")
-                                     and mtr.MTR_ID = cfg.MTR_ID
-                                     and cfg.MTR_CONFIG_ID = hst.MTR_CONFIG_ID
-                                     and hst.SP_ID = sasp.SP_ID
-                                     and sasp.SA_ID = sa.SA_ID
-                                     and sa.SA_ID = rs.SA_ID ",
-                                         if (most_recent_rs) {
-                                           "and rs.EFFDT = (select MAX(EFFDT)
-                                                            from CISADM.CI_SA_RS_HIST rs2
-                                                            where rs.SA_ID = rs2.SA_ID)"
-                                         }
-      ))
-    }
-    else if(is_sa){
 
-      list[[i]] <- dbGetQuery(con, paste0("SELECT mtr.BADGE_NBR,
-                                                  hst.REMOVAL_DTTM,
-                                                  mtr.RETIRE_DT,
-                                                  mtr.SERIAL_NBR,
-                                                  hst.SP_ID,
-                                                  sa.SA_ID,
-                                                  sa.SA_STATUS_FLG,
-                                                  sa.ACCT_ID,
-                                                  rs.RS_CD,
-                                                  rs.EFFDT
-                                     FROM CISADM.CI_MTR mtr,
-                                          CISADM.CI_MTR_CONFIG cfg,
-                                          CISADM.CI_SP_MTR_HIST hst,
-                                          CISADM.CI_SA_SP sasp,
-                                          CISADM.CI_SA sa,
-                                          CISADM.CI_SA_RS_HIST rs
-                                     where mtr.MTR_ID = cfg.MTR_ID
-                                     and cfg.MTR_CONFIG_ID = hst.MTR_CONFIG_ID
-                                     and hst.SP_ID = sasp.SP_ID
-                                     and sasp.SA_ID = sa.SA_ID
-                                     and sa.SA_ID in (", to_sql_list(ids),")
-                                     and sa.SA_ID = rs.SA_ID ",
-                                         if (most_recent_rs) {
-                                           "and rs.EFFDT = (select MAX(EFFDT)
-                                                            from CISADM.CI_SA_RS_HIST rs2
-                                                            where rs.SA_ID = rs2.SA_ID)"
-                                         }
-      ))
+    if(id_type=='SA_ID'){
+      q2 <- " Where sa.SA_ID in "
+    } else if(id_type=='PREM_ID'){
+      q2 <- " Where sp.PREM_ID in "
+    } else if(id_type=='ACCT_ID'){
+      q2 <- " Where sa.ACCT_ID in "
+    } else if(id_type=='SP_ID'){
+      q2 <- " Where sp.SP_ID in "
+    } else if(id_type=='BADGE_NBR'){
+      q2 <- " Where mtr.BADGE_NBR in "
     }
-    else if(is_acct_id){
 
-      list[[i]] <- dbGetQuery(con, paste0("SELECT mtr.BADGE_NBR,
-                                                  hst.REMOVAL_DTTM,
-                                                  mtr.RETIRE_DT,
-                                                  mtr.SERIAL_NBR,
-                                                  hst.SP_ID,
-                                                  sa.SA_ID,
-                                                  sa.SA_STATUS_FLG,
-                                                  sa.ACCT_ID,
-                                                  rs.RS_CD,
-                                                  rs.EFFDT
-                                     FROM CISADM.CI_MTR mtr,
-                                          CISADM.CI_MTR_CONFIG cfg,
-                                          CISADM.CI_SP_MTR_HIST hst,
-                                          CISADM.CI_SA_SP sasp,
-                                          CISADM.CI_SA sa,
-                                          CISADM.CI_SA_RS_HIST rs
-                                     where mtr.MTR_ID = cfg.MTR_ID
-                                     and cfg.MTR_CONFIG_ID = hst.MTR_CONFIG_ID
-                                     and hst.SP_ID = sasp.SP_ID
-                                     and sasp.SA_ID = sa.SA_ID
-                                     and sa.ACCT_ID in (", to_sql_list(ids),")
-                                     and sa.SA_ID = rs.SA_ID ",
-                                         if (most_recent_rs) {
-                                           "and rs.EFFDT = (select MAX(EFFDT)
-                                                            from CISADM.CI_SA_RS_HIST rs2
-                                                            where rs.SA_ID = rs2.SA_ID)"
-                                         })
-      )
-    }
+    ids <- paste0('(',paste0("'", as.vector(id_bundle), "'", collapse=", "),')')
+
+    q2 <- paste0(q2, ids)
+
+    q3 <- " and mtr.MTR_ID = cfg.MTR_ID
+           and cfg.MTR_CONFIG_ID = hst.MTR_CONFIG_ID
+           and hst.SP_ID = sp.SP_ID
+           and hst.SP_ID = sasp.SP_ID
+           and sasp.SA_ID = sa.SA_ID
+           and sa.SA_ID = rs.SA_ID
+          and rs.EFFDT = (select MAX(EFFDT) from CISADM.CI_SA_RS_HIST rs2 where rs.SA_ID = rs2.SA_ID)"
+
+    query <- paste0(q1,q2,q3)
+
+    meta_list[[i]] <- dbGetQuery(con, query)
 
     i <- i + 1
 
   }
 
-  customer_map <- rbindlist(list)
-  #customer_map <- trimws_custom(customer_map)
+  meta <- rbindlist(meta_list, fill = T)
 
-  return(customer_map)
+  return(meta)
 
 }
