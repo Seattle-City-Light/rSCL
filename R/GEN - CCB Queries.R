@@ -66,7 +66,7 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
 
     query <- paste0(q1,q2,q3)
 
-    meta_list[[i]] <- dbGetQuery(con, query)
+    meta_list[[i]] <- DBI::dbGetQuery(con, query)
 
     i <- i + 1
 
