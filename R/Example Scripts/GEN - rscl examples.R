@@ -35,7 +35,7 @@ add_keyring_connection(user = 'MATTHEW',
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 # for generic databases like CCB scl_connect sets con for ccb in the global environment
-scl_connect('MATTHEW', 'CCB')
+scl_connect('CCB')
 
 # for the ACCELA database there is no keyring password needed so it is just set as the global environment connection
 scl_connect('MATTHEW', 'ACCELA')
