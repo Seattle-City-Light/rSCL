@@ -12,40 +12,17 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
 
   scl_connect('CCB')
 
-  valid_id_types <- c('SA_ID',
-                      'PREM_ID',
-                      'ACCT_ID',
-                      'SP_ID',
-                      "BADGE_NBR")
+  id_type <- toupper(id_type)
 
-  if(!id_type %in% valid_id_types){
+  check_valid_id_type(id_type)
 
-    print('Please provide a valid id_type from this list:')
-    print(valid_id_types)
-
-    return()
-
-  }
-
-  list_of_vectors <- list()
-  num_items <- ceiling(length(ids)/1000)
-
-  for(i in seq(1:num_items)){
-
-    if(i != num_items){
-      list_of_vectors[[i]]= ids[seq(1000*(i-1)+1, 1000*i,1)]
-
-    }else{
-      list_of_vectors[[i]]= ids[seq(1000*(i-1)+1,length(ids),1)]
-    }
-  }
-
+  list_of_ids <- create_list_of_vectors_of_specific_size(ids,1000)
 
   meta_list <- list()
   i <- 1
-  print(paste0("Pulling Meta Data for ",length(list_of_vectors),' bundle(s) of IDs.'))
+  print(paste0("Pulling Meta Data for ",length(list_of_ids),' bundle(s) of IDs.'))
 
-  for(id_bundle in list_of_vectors){
+  for(id_bundle in list_of_ids){
 
     print(i)
 
@@ -100,3 +77,30 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
   return(meta)
 
 }
+
+
+
+
+
+check_valid_id_type <- function(id_type = 'PREM_ID'){
+
+  valid_id_types <- c('SA_ID',
+                      'PREM_ID',
+                      'ACCT_ID',
+                      'SP_ID',
+                      "BADGE_NBR")
+
+  if(!id_type %in% valid_id_types){
+
+    print('Please provide a valid id_type from this list:')
+    print(valid_id_types)
+
+    return()
+
+  }
+
+}
+
+
+
+

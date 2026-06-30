@@ -38,11 +38,11 @@ add_keyring_connection(user = 'MATTHEW',
 scl_connect('CCB')
 
 # for the ACCELA database there is no keyring password needed so it is just set as the global environment connection
-scl_connect('MATTHEW', 'ACCELA')
+scl_connect('ACCELA')
 
 # for the MSCS database there is no direction session connection possible so instead the keyring password with other
 # credentials are returned for in script rest API queries.
-scl_connect('MATTHEW', 'MSCS')
+scl_connect('MSCS')
 
 
 
