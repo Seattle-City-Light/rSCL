@@ -4,12 +4,12 @@
 \alias{scl_connect}
 \title{Generalized scl database connect function}
 \usage{
-scl_connect(user = "MATTHEW", database = "CCB")
+scl_connect(database = "CCB")
 }
 \arguments{
-\item{user}{Name of user trying to connect to database}
-
 \item{database}{Name of database user is trying to connect to}
+
+\item{user}{Name of user trying to connect to database}
 }
 \value{
 Prints if connection was successful or not also will return parameters for db like MSCS

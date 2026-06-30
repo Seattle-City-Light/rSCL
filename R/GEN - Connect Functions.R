@@ -21,24 +21,10 @@ scl_connect <- function(database = 'CCB') {
   user <- rstudioapi::showPrompt(title = "User Input", message = "Enter your SCL username")
 
   user <- toupper(user)
-
   database <- toupper(database)
 
-  valid_db <- c("ODWP",
-               "EPMMART",
-               "MSCS",
-               "CCB",
-               "ACCELA",
-               "EPMMART_RW")
-
-  if(!database %in% valid_db){
-
-    print('Please provide a valid database from this list:')
-    print(valid_db)
-
-    return()
-
-  }
+  check_valid_db(database)
+  check_valid_user(user)
 
 
   if(database %in% c('ACCELA')){
@@ -109,4 +95,48 @@ connect_mscs <- function(user = 'MATTHEW'){
 
   return(creds)
 
+}
+
+
+
+
+
+check_valid_db <- function(db = 'cc'){
+
+  valid_db <- c("ODWP",
+                "EPMMART",
+                "MSCS",
+                "CCB",
+                "ACCELA",
+                "EPMMART_RW")
+
+  if(!database %in% valid_db){
+
+    print('Please provide a valid database from this list:')
+    print(valid_db)
+
+    return()
+
+  }
+}
+
+
+
+
+
+check_valid_user <- function(user = 'matthew'){
+
+  valid_user <- c("MATTHEW",
+                  "MIKE",
+                  "JOEL",
+                  "RUIZHE")
+
+  if(!user %in% valid_db){
+
+    print('Please provide a valid username from this list:')
+    print(valid_user)
+
+    return()
+
+  }
 }
