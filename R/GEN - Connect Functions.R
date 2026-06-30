@@ -131,7 +131,7 @@ check_valid_user <- function(user = 'matthew'){
                   "JOEL",
                   "RUIZHE")
 
-  if(!user %in% valid_db){
+  if(!user %in% valid_user){
 
     print('Please provide a valid username from this list:')
     print(valid_user)
