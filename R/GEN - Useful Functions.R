@@ -34,13 +34,13 @@ create_list_of_vectors_of_specific_size <- function(v = c(1,2,3,4,5,6,7), size =
 #' @export
 trimws_custom <- function(df) {
 
-  `:=` <- data.table::`:=`
-
   df <- data.table::as.data.table(df)
+
   cols_to_be_rectified <- names(df)[vapply(df, is.character, logical(1))]
+
   if (length(cols_to_be_rectified) > 0) {
-    # Call the data.table bracket function explicitly
-    df <- data.table:::`[`(
+    # Call the explicit S3 data.table bracket function
+    df <- data.table:::`[.data.table`(
       df,
       ,
       (cols_to_be_rectified) := lapply(.SD, trimws),
