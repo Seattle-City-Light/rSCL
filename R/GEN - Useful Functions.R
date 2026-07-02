@@ -2,6 +2,8 @@
 # This file contains useful functions that have general utility
 # and not related to a specific purpose
 # ------------------------------------------------------------------------------
+.datatable.aware <- TRUE
+
 
 
 
