@@ -36,8 +36,17 @@ trimws_custom <- function(df) {
 
   df <- data.table::as.data.table(df)
   cols_to_be_rectified <- names(df)[vapply(df, is.character, logical(1))]
-  df[,c(cols_to_be_rectified) := lapply(.SD, trimws), .SDcols = cols_to_be_rectified]
+  if (length(cols_to_be_rectified) > 0) {
+    # Call the data.table bracket function explicitly
+    df <- data.table:::`[`(
+      df,
+      ,
+      (cols_to_be_rectified) := lapply(.SD, trimws),
+      .SDcols = cols_to_be_rectified
+    )
+  }
 
+  return(df)
 }
 
 
