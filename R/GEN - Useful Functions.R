@@ -32,7 +32,7 @@ create_list_of_vectors_of_specific_size <- function(v = c(1,2,3,4,5,6,7), size =
 #' @export
 trimws_custom <- function(df) {
 
-  setDT(df)
+  data.table::setDT(df)
   cols_to_be_rectified <- names(df)[vapply(df, is.character, logical(1))]
   df[,c(cols_to_be_rectified) := lapply(.SD, trimws), .SDcols = cols_to_be_rectified]
 
