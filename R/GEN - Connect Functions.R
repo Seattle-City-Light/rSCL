@@ -23,8 +23,8 @@ scl_connect <- function(database = 'CCB') {
   user <- toupper(user)
   database <- toupper(database)
 
-  check_valid_db(database)
-  check_valid_user(user)
+  connect_check_valid_db(database)
+  connect_check_valid_user(user)
 
 
   if(database %in% c('ACCELA')){
@@ -101,7 +101,7 @@ connect_mscs <- function(user = 'MATTHEW'){
 
 
 
-check_valid_db <- function(database = 'cc'){
+connect_check_valid_db <- function(database = 'cc'){
 
   valid_db <- c("ODWP",
                 "EPMMART",
@@ -124,7 +124,7 @@ check_valid_db <- function(database = 'cc'){
 
 
 
-check_valid_user <- function(user = 'matthew'){
+connect_check_valid_user <- function(user = 'matthew'){
 
   valid_user <- c("MATTHEW",
                   "MIKE",

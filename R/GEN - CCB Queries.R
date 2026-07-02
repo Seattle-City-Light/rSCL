@@ -14,7 +14,7 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
 
   id_type <- toupper(id_type)
 
-  check_valid_id_type(id_type)
+  ccb_check_valid_id_type(id_type)
 
   list_of_ids <- create_list_of_vectors_of_specific_size(ids,1000)
 
@@ -82,7 +82,7 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
 
 
 
-check_valid_id_type <- function(id_type = 'PREM_ID'){
+ccb_check_valid_id_type <- function(id_type = 'PREM_ID'){
 
   valid_id_types <- c('SA_ID',
                       'PREM_ID',
