@@ -75,6 +75,8 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
 
   meta <- data.table::rbindlist(meta_list, fill = T)
 
+  meta <- trimws_custom(meta)
+
   return(meta)
 
 }

@@ -65,7 +65,26 @@ upload_backup_connections(backup_dir = 'I:/FINANCE/FPU/Matthew/Keyring Manager B
 
 
 
+
+
+
+
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Example of how to pull meter data for a premise
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+library(dplyr)
+
+# pulling all customer meta info for one specific premise
 customer_meta <- scl_pull_customer_meter_meta(ids = '7010433273', id_type = 'PREM_ID')
+
+customer_meta <- customer_meta %>%
+  filter(SA_STATUS_FLG=='20') %>% # only active service agreements
+  filter(is.na(REMOVAL_DTTM) & is.na(RETIRE_DT)) # only currently active meters at the premise
+
+serivce_point <- scl_pull_badge_to_d1sp_map(ids = customer_meta$BADGE_NBR, id_type = 'BADGE_NBR')
+
 
 temp <- scl_pull_mscs_hourly_load(start_date = '2025-01-01',end_date =  '2026-01-01')
 
