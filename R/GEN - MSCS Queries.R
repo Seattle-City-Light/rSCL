@@ -157,7 +157,7 @@ scl_pull_mscs_hourly_load <- function(d1_sp_ids = c('746791443786','950920972116
 
   data_list <- list()
   i <- 1
-  print(paste0("Pulling ID map for ",length(list_of_ids),' bundle(s) of IDs.'))
+  print(paste0("Pulling meter data for ",length(list_of_ids),' bundle(s) of IDs.'))
 
   for(id_bundle in list_of_ids){
 

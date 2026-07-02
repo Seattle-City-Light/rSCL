@@ -62,6 +62,7 @@ scl_pull_customer_meter_meta <- function(ids = c('0614615463'),
            and hst.SP_ID = sasp.SP_ID
            and sasp.SA_ID = sa.SA_ID
            and sa.SA_ID = rs.SA_ID
+           and rs.RS_CD like 'E%'
           and rs.EFFDT = (select MAX(EFFDT) from CISADM.CI_SA_RS_HIST rs2 where rs.SA_ID = rs2.SA_ID)"
 
     query <- paste0(q1,q2,q3)

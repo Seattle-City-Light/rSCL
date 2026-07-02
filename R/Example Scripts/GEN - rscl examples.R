@@ -65,9 +65,9 @@ upload_backup_connections(backup_dir = 'I:/FINANCE/FPU/Matthew/Keyring Manager B
 
 
 
+customer_meta <- scl_pull_customer_meter_meta(ids = '7010433273', id_type = 'PREM_ID')
 
-
-
+temp <- scl_pull_mscs_hourly_load(start_date = '2025-01-01',end_date =  '2026-01-01')
 
 
 
