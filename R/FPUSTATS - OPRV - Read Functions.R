@@ -5,22 +5,18 @@
 #' @param month Month of the report of interest
 #' @param most_eff_dt T/F Do you want the most recently uploaded version of the report(s)
 #' @param read_all T/F Do you want all oprv reports or not
-#' @param user Keyring Manager username
-#' @param database Keyring Manager database name
 #' @return Returns all oprv records with the given parameter arguments
 #' @export
 fpustats_read_oprv <- function(year = 2024,
                                month = 1,
                                most_eff_dt = T,
                                read_all = F,
-                               user = 'MATTHEW',
-                               database = 'EPMMART_RW',
                                connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
   query <- "Select* From FPUSTATS.OPRV_REPORT"

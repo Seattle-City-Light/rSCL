@@ -77,16 +77,25 @@ upload_backup_connections(backup_dir = 'I:/FINANCE/FPU/Matthew/Keyring Manager B
 library(dplyr)
 
 # pulling all customer meta info for one specific premise
-customer_meta <- scl_pull_customer_meter_meta(ids = '7010433273', id_type = 'PREM_ID')
-
+customer_meta <- scl_pull_customer_meter_meta(ids = '7010433273',
+                                              id_type = 'PREM_ID')
+# filtering down to badge numbers of interest
 customer_meta <- customer_meta %>%
   filter(SA_STATUS_FLG=='20') %>% # only active service agreements
   filter(is.na(REMOVAL_DTTM) & is.na(RETIRE_DT)) # only currently active meters at the premise
 
-serivce_point <- scl_pull_badge_to_d1sp_map(ids = customer_meta$BADGE_NBR, id_type = 'BADGE_NBR')
+# get badge number's associated service points
+serivce_point <- scl_pull_badge_to_d1sp_map(ids = customer_meta$BADGE_NBR,
+                                            id_type = 'BADGE_NBR')
 
+# filtering to currently active service point associated with the badge numbers
+serivce_point <- serivce_point %>%
+  filter(is.na(D1_REMOVAL_DTTM)) # only currently active service point associated with the badge numbers
 
-temp <- scl_pull_mscs_hourly_load(start_date = '2025-01-01',end_date =  '2026-01-01')
+# pulling load for service points - note this is a slower way to pull load data from mscs rather than running query directly in MSCS sql developer
+temp <- scl_pull_mscs_hourly_load(d1_sp_ids = serivce_point$D1_SP_ID,
+                                  start_date = '2025-01-01',
+                                  end_date =  '2026-01-01')
 
 
 
