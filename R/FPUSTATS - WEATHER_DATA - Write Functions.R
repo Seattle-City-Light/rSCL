@@ -6,7 +6,7 @@
 #' @param connect True or false if you want the function to handle the FPUSTATS connect
 #' @return Writes forecast to FPUSTATS STREETLIGHT_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(sl_forecast$FORECAST_VINTAGE)
 #' @export
-fpustats_write_weather_data <- function(year = 2026,
+fpustats_write_weather_data <- function(year = 1980,
                                         month = 1,
                                         connect = T){
 
@@ -102,6 +102,9 @@ fpustats_write_weather_data <- function(year = 2026,
   processed_data$STATION_ID <- paste0("'",as.character(processed_data$STATION_ID),"'")
   processed_data <- processed_data %>%
     dplyr::mutate(dplyr::across(everything(), ~ tidyr::replace_na(as.character(.x), "NULL")))
+
+  processed_data <- trimws_custom(processed_data)
+  processed_data <- processed_data[, lapply(.SD, function(x) ifelse(x=='', 'NULL', x))]
 
   for(i in seq(1,nrow(processed_data))){
 
