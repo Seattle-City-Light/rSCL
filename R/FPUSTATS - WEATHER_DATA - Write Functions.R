@@ -116,7 +116,9 @@ fpustats_write_weather_data <- function(year = 1980,
 
   }
 
-  RJDBC::dbDisconnect(con)
+  if(connect){
+    RJDBC::dbDisconnect(con)
+  }
 
   return(paste("Successfully uploaded Weather Data for ", year,'-',month))
 }
