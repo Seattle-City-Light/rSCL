@@ -6,8 +6,8 @@
 #' @param connect True or false if you want the function to handle the FPUSTATS connect
 #' @return Writes forecast to FPUSTATS STREETLIGHT_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(sl_forecast$FORECAST_VINTAGE)
 #' @export
-fpustats_write_weather_data <- function(year = 1980,
-                                        month = 1,
+fpustats_write_weather_data <- function(year = 1982,
+                                        month = 3,
                                         connect = T){
 
   `%>%` <- dplyr::`%>%`
@@ -54,7 +54,9 @@ fpustats_write_weather_data <- function(year = 1980,
                   mslp = ifelse(mslp=='T' | mslp=='M', NA, mslp),
                   mslp = as.numeric(mslp),
                   p01m = ifelse(p01m=='T' | p01m=='M', NA, p01m),
-                  p01m = as.numeric(p01m)) %>%
+                  p01m = as.numeric(p01m),
+
+                  skyc1 = ifelse(skyc1=='T' | skyc1=='M', NA, skyc1)) %>%
     dplyr::group_by(DATE, HOUR) %>%
     dplyr::summarise(tmpf = mean(tmpf,na.rm=T),
                      dwpf = mean(dwpf,na.rm=T),
