@@ -3,24 +3,20 @@
 #'
 #' @param year Year of the weather data of interest
 #' @param month Month of the weather data of interest
-#' @param user Keyring Manager username
-#' @param database Keyring Manager database name
 #' @param connect True or false if you want the function to handle the FPUSTATS connect
 #' @return Writes forecast to FPUSTATS STREETLIGHT_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(sl_forecast$FORECAST_VINTAGE)
 #' @export
-fpustats_update_weather_data <- function(year = 2026,
-                                         month = 1,
-                                         user = 'MATTHEW',
-                                         database = 'EPMMART_RW',
-                                         connect = T){
+fpustats_write_weather_data <- function(year = 2026,
+                                        month = 1,
+                                        connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
-  num_days <- days_in_month(ymd(paste(year,month,1)))
+  num_days <- lubridate::days_in_month(lubridate::ymd(paste(year,month,1)))
 
   path <- paste0('https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?network=WA_ASOS&station=SEA&data=tmpf&data=dwpf&data=drct&data=sped&data=mslp&data=p01m&data=skyc1&year1=',
                  year,
@@ -40,29 +36,44 @@ fpustats_update_weather_data <- function(year = 2026,
   parsed_data <- read.csv(text = rawToChar(data$content))
 
   processed_data <- parsed_data %>%
-    mutate(DATETIME = ymd_hm(valid),
-           DATE = date(DATETIME),
-           HOUR = hour(DATETIME)) %>%
-    group_by(DATE, HOUR) %>%
-    slice(1) %>%
-    mutate(DATETIME = ymd_h(paste(DATE,HOUR)))
+    dplyr::mutate(DATETIME = lubridate::ymd_hm(valid),
+                  DATE = lubridate::date(DATETIME),
+                  HOUR = lubridate::hour(DATETIME),
+                  drct = ifelse(drct=='M', NA, drct),
+                  sped = ifelse(sped=='M', NA, sped),
+                  drct = as.numeric(drct),
+                  sped = as.numeric(sped),
+                  drct = ifelse(drct == 0 & sped == 0, NA, drct),
+                  sped = ifelse(drct == 0 & sped == 0, NA, sped),
+                  mslp = ifelse(mslp=='M', NA, mslp),
+                  mslp = as.numeric(mslp),
+                  p01m = ifelse(p01m=='T', NA, p01m),
+                  p01m = as.numeric(p01m)) %>%
+    dplyr::group_by(DATE, HOUR) %>%
+    dplyr::summarise(tmpf = mean(tmpf,na.rm=T),
+                     dwpf = mean(dwpf,na.rm=T),
+                     drct = mean(drct,na.rm=T),
+                     sped = mean(sped,na.rm=T),
+                     mslp = mean(mslp,na.rm=T),
+                     p01m = mean(p01m,na.rm=T),
+                     skyc1 = dplyr::first(skyc1),
+                     station = dplyr::first(station)) %>%
+    dplyr::mutate(DATETIME = lubridate::ymd_h(paste(DATE,HOUR)),
+                  )
+
+  data.table::setDT(processed_data)
+  processed_data <- processed_data[, lapply(.SD, function(x) replace(x, is.nan(x), NA))]
+
 
   processed_data <- processed_data %>%
-    ungroup() %>%
-    select(DATETIME,tmpf:skyc1,station)
+    dplyr::ungroup() %>%
+    dplyr::select(DATETIME,tmpf:skyc1,station)
 
   colnames(processed_data) <- c('DATETIME','TEMPERATURE','DEW_POINT_TEMPERATURE',
                                 'WIND_DIRECTION','WIND_SPEED','SEA_LEVEL_PRESSURE',
                                 'PRECIPITATION_DEPTH_1HR','CLOUD_COVERAGE','STATION_ID')
 
-  options(warn = -1)
-  processed_data$WIND_SPEED <- as.numeric(processed_data$WIND_SPEED)
-  processed_data$WIND_DIRECTION <- as.numeric(processed_data$WIND_DIRECTION)
-  processed_data$SEA_LEVEL_PRESSURE <- as.numeric(processed_data$SEA_LEVEL_PRESSURE)
-  processed_data$PRECIPITATION_DEPTH_1HR <- as.numeric(processed_data$PRECIPITATION_DEPTH_1HR)
-  options(warn = 0)
-
-  setDT(processed_data)
+  data.table::setDT(processed_data)
   processed_data[CLOUD_COVERAGE == 'CLR', CLOUD_COVERAGE := 1]
   processed_data[CLOUD_COVERAGE == 'FEW', CLOUD_COVERAGE := 2]
   processed_data[CLOUD_COVERAGE == 'SCT', CLOUD_COVERAGE := 3]
@@ -73,16 +84,19 @@ fpustats_update_weather_data <- function(year = 2026,
   processed_data$PRECIPITATION_DEPTH_6HR <- NA
 
 
-  processed_data$DATETIME_UTC <- with_tz(processed_data$DATETIME,'UTC')
+  processed_data$DATETIME_UTC <-lubridate::with_tz(processed_data$DATETIME,'UTC')
 
   processed_data$DATETIME <- NULL
 
   processed_data <- processed_data %>%
-    select(DATETIME_UTC,TEMPERATURE,DEW_POINT_TEMPERATURE, SEA_LEVEL_PRESSURE,
-           WIND_DIRECTION,WIND_SPEED,CLOUD_COVERAGE,PRECIPITATION_DEPTH_1HR,
-           PRECIPITATION_DEPTH_6HR, STATION_ID)
+    dplyr::select(DATETIME_UTC,TEMPERATURE,DEW_POINT_TEMPERATURE, SEA_LEVEL_PRESSURE,
+                  WIND_DIRECTION,WIND_SPEED,CLOUD_COVERAGE,PRECIPITATION_DEPTH_1HR,
+                  PRECIPITATION_DEPTH_6HR, STATION_ID)
 
-  processed_data$DATETIME_UTC <- as.character(processed_data$DATETIME_UTC)
+  processed_data$DATETIME_UTC <- paste0("TO_DATE('",as.character(processed_data$DATETIME_UTC),"', 'YYYY-MM-DD HH24:MI:SS')")
+  processed_data$STATION_ID <- paste0("'",as.character(processed_data$STATION_ID),"'")
+  processed_data <- processed_data %>%
+    dplyr::mutate(dplyr::across(everything(), ~ tidyr::replace_na(as.character(.x), "NULL")))
 
   for(i in seq(1,nrow(processed_data))){
 
@@ -103,31 +117,23 @@ fpustats_update_weather_data <- function(year = 2026,
 
 
 
-
-
-
-
-#' This function deletes streetlight forecasts from the FPUSTATS Database
+#' This function deletes weather data from the FPUSTATS Database
 #'
-#' @param forecast_vintage Year of the vintage of interest
-#' @param eff_dt upload date of the specific forecast you want to delete
+#' @param year Year of the report of interest
+#' @param month Month of the report of interest
 #' @param connect T/F if you want the function to do the connect or not (typically false if looping over multiple reports)
-#' @param user Keyring Manager username
-#' @param database Keyring Manager database name
-#' @return Deletes specific forecasts from database and returns the print statement "OUL forecast for vintage", forecast_vintage, "Uploaded on:", eff_dt,"has been deleted."
+#' @return Deletes specific year/month from database and returns the print statement "Weather Data for", year,'-',month," has been deleted."
 #' @export
-fpustats_delete_streetlight_forecast <- function(forecast_vintage = 2026,
-                                                 eff_dt = '2026-02-10',
-                                                 connect = T,
-                                                 user = 'MATTHEW',
-                                                 database = 'EPMMART_RW'){
+fpustats_delete_oprv_report <- function(year = 2026,
+                                        month = 1,
+                                        connect = T){
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
 
-  query <- paste0("DELETE FROM FPUSTATS.STREETLIGHT_FORECAST WHERE FORECAST_VINTAGE = ", forecast_vintage,
-                  "AND EFF_DT = TO_DATE('",eff_dt,"','YYYY-MM-DD')")
+  query <- paste0("DELETE FROM FPUSTATS.WEATHER_DATA WHERE EXTRACT(YEAR FROM DATETIME_UTC) = ", year,
+                  " AND EXTRACT(MONTH FROM DATETIME_UTC) = ", month)
 
   RJDBC::dbSendUpdate(con, query)
 
@@ -135,12 +141,7 @@ fpustats_delete_streetlight_forecast <- function(forecast_vintage = 2026,
     RJDBC::dbDisconnect(con)
   }
 
-  return(paste("Streetlight forecast for vintage", forecast_vintage, "Uploaded on:", eff_dt,"has been deleted."))
+  return(paste("Weather Data for", year,'-',month," has been deleted."))
 
 }
-
-
-
-
-
 
