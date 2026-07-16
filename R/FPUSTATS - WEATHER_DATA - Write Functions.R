@@ -39,15 +39,21 @@ fpustats_write_weather_data <- function(year = 2026,
     dplyr::mutate(DATETIME = lubridate::ymd_hm(valid),
                   DATE = lubridate::date(DATETIME),
                   HOUR = lubridate::hour(DATETIME),
-                  drct = ifelse(drct=='M', NA, drct),
-                  sped = ifelse(sped=='M', NA, sped),
+
+                  tmpf = ifelse(tmpf=='T' | tmpf=='M', NA, tmpf),
+                  dwpf = ifelse(dwpf=='T' | dwpf=='M', NA, dwpf),
+                  tmpf = as.numeric(tmpf),
+                  dwpf = as.numeric(dwpf),
+
+                  drct = ifelse(drct=='T' | drct=='M', NA, drct),
+                  sped = ifelse(sped=='T' | sped=='M', NA, sped),
                   drct = as.numeric(drct),
                   sped = as.numeric(sped),
                   drct = ifelse(drct == 0 & sped == 0, NA, drct),
                   sped = ifelse(drct == 0 & sped == 0, NA, sped),
-                  mslp = ifelse(mslp=='M', NA, mslp),
+                  mslp = ifelse(mslp=='T' | mslp=='M', NA, mslp),
                   mslp = as.numeric(mslp),
-                  p01m = ifelse(p01m=='T', NA, p01m),
+                  p01m = ifelse(p01m=='T' | p01m=='M', NA, p01m),
                   p01m = as.numeric(p01m)) %>%
     dplyr::group_by(DATE, HOUR) %>%
     dplyr::summarise(tmpf = mean(tmpf,na.rm=T),
@@ -58,8 +64,7 @@ fpustats_write_weather_data <- function(year = 2026,
                      p01m = mean(p01m,na.rm=T),
                      skyc1 = dplyr::first(skyc1),
                      station = dplyr::first(station)) %>%
-    dplyr::mutate(DATETIME = lubridate::ymd_h(paste(DATE,HOUR)),
-                  )
+    dplyr::mutate(DATETIME = lubridate::ymd_h(paste(DATE,HOUR)))
 
   data.table::setDT(processed_data)
   processed_data <- processed_data[, lapply(.SD, function(x) replace(x, is.nan(x), NA))]
@@ -124,7 +129,7 @@ fpustats_write_weather_data <- function(year = 2026,
 #' @param connect T/F if you want the function to do the connect or not (typically false if looping over multiple reports)
 #' @return Deletes specific year/month from database and returns the print statement "Weather Data for", year,'-',month," has been deleted."
 #' @export
-fpustats_delete_oprv_report <- function(year = 2026,
+fpustats_delete_oprv_report <- function(year = 1980,
                                         month = 1,
                                         connect = T){
   if(connect){
