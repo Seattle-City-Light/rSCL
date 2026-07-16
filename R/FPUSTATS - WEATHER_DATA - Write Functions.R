@@ -129,9 +129,9 @@ fpustats_write_weather_data <- function(year = 2026,
 #' @param connect T/F if you want the function to do the connect or not (typically false if looping over multiple reports)
 #' @return Deletes specific year/month from database and returns the print statement "Weather Data for", year,'-',month," has been deleted."
 #' @export
-fpustats_delete_oprv_report <- function(year = 1980,
-                                        month = 1,
-                                        connect = T){
+fpustats_delete_weather_data <- function(year = 1980,
+                                         month = 1,
+                                         connect = T){
   if(connect){
     scl_connect('EPMMART_RW')
   }
