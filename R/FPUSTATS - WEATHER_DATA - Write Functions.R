@@ -6,8 +6,8 @@
 #' @param connect True or false if you want the function to handle the FPUSTATS connect
 #' @return Writes forecast to FPUSTATS STREETLIGHT_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(sl_forecast$FORECAST_VINTAGE)
 #' @export
-fpustats_write_weather_data <- function(year = 1982,
-                                        month = 3,
+fpustats_write_weather_data <- function(year = 1980,
+                                        month = 1,
                                         connect = T){
 
   `%>%` <- dplyr::`%>%`
@@ -16,7 +16,7 @@ fpustats_write_weather_data <- function(year = 1982,
     scl_connect('EPMMART_RW')
   }
 
-  num_days <- lubridate::days_in_month(lubridate::ymd(paste(year,month,1)))
+  #num_days <- lubridate::days_in_month(lubridate::ymd(paste(year,month,1)))
 
   path <- paste0('https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?network=WA_ASOS&station=SEA&data=tmpf&data=dwpf&data=drct&data=sped&data=mslp&data=p01m&data=skyc1&year1=',
                  year,
@@ -25,9 +25,9 @@ fpustats_write_weather_data <- function(year = 1982,
                  '&day1=1&year2=',
                  year,
                  '&month2=',
-                 month,
+                 month+1,
                  '&day2=',
-                 num_days,
+                 1,
                  '&tz=Etc%2FUTC&format=onlycomma&latlon=no&elev=no&missing=M&trace=T&direct=no&report_type=3&report_type=4')
 
 
