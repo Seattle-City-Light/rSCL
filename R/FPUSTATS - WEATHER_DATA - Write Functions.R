@@ -16,16 +16,26 @@ fpustats_write_weather_data <- function(year = 1980,
     scl_connect('EPMMART_RW')
   }
 
-  #num_days <- lubridate::days_in_month(lubridate::ymd(paste(year,month,1)))
+  if(month==12){
+
+    end_month <- 1
+    end_year <- year+1
+
+  } else {
+
+    end_month <- month+1
+    end_year <- year
+
+  }
 
   path <- paste0('https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?network=WA_ASOS&station=SEA&data=tmpf&data=dwpf&data=drct&data=sped&data=mslp&data=p01m&data=skyc1&year1=',
                  year,
                  '&month1=',
                  month,
                  '&day1=1&year2=',
-                 year,
+                 end_year,
                  '&month2=',
-                 month+1,
+                 end_month,
                  '&day2=',
                  1,
                  '&tz=Etc%2FUTC&format=onlycomma&latlon=no&elev=no&missing=M&trace=T&direct=no&report_type=3&report_type=4')
@@ -70,8 +80,6 @@ fpustats_write_weather_data <- function(year = 1980,
 
   data.table::setDT(processed_data)
   processed_data <- processed_data[, lapply(.SD, function(x) replace(x, is.nan(x), NA))]
-
-  #change
 
   processed_data <- processed_data %>%
     dplyr::ungroup() %>%
@@ -155,6 +163,59 @@ fpustats_delete_weather_data <- function(year = 1980,
   }
 
   return(paste("Weather Data for", year,'-',month," has been deleted."))
+
+}
+
+
+
+
+
+#' This function updates the weather data in the FPUSTATS Database to the system date
+#'
+#' @return lets the user know if the weather data has been updated
+#' @export
+fpustats_update_weather_data <- function(){
+
+  scl_connect('EPMMART_RW')
+
+  sys_date <- Sys.Date()
+
+  query <- paste0("SELECT *
+                   FROM FPUSTATS.WEATHER_DATA
+                   ORDER BY DATETIME_UTC DESC
+                   FETCH FIRST 1 ROW ONLY")
+
+  last_update_date <- RJDBC::dbGetQuery(con, query)
+
+  year_of_last_update <- lubridate::year(last_update_date$DATETIME_UTC)
+  month_of_last_update <- lubridate::month(last_update_date$DATETIME_UTC)
+
+  fpustats_delete_weather_data(year = year_of_last_update,
+                               month = month_of_last_update,
+                               connect = F)
+
+
+  year_of_sys <- lubridate::year(sys_date)
+  month_of_sys <- lubridate::month(sys_date)
+
+  last_update_date <- lubridate::ymd(paste(year_of_last_update,month_of_last_update,1))
+  year_month_of_sys <- lubridate::ymd(paste(year_of_sys,month_of_sys,1))
+
+  year_months <- seq(last_update_date, sys_date, by='month')
+
+  for(i in seq(1,length(year_months))){
+
+    year_month <- year_months[i]
+
+    print(paste0('Year - Month being updated: ',lubridate::year(year_month),'-',lubridate::month(year_month)))
+
+    fpustats_write_weather_data(year = lubridate::year(year_month),
+                                month = lubridate::month(year_month),
+                                connect = F)
+
+  }
+
+  return(paste("Weather Data has been updated to ",sys_date))
 
 }
 
