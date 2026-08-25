@@ -16,12 +16,15 @@ print_keyring_connections()
 # Example of deleting and adding a keyring connection to the keyring manager
 delete_keyring_connection('MATTHEW', 'MSCS')
 
+add_keyring_connection()
+
 add_keyring_connection(user = 'MATTHEW',
-                       database = 'MSCS',
-                       server = "https://us-ashburn-1.utilities-cloud.oracleindustry.com/c898w8/prod/msc/sql/rest",
-                       keyring_service = "MSCS",
+                       database = 'EPMMART_RW',
+                       server = "jdbc:oracle:thin:@//lvsp131.light.ci.seattle.wa.us:1557/EPMMARTP",
+                       jdbc_driver_path = 'N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar',
+                       keyring_service = "FPU_STAT",
                        keyring_name = 'MH',
-                       keyring_username = "matthew.hamlin@seattle.gov",
+                       keyring_username = "hamlinm_rw",
                        keyring_password = "")
 
 
@@ -45,6 +48,8 @@ scl_connect('ACCELA')
 scl_connect('MSCS')
 
 
+scl_connect('EPMMART_RW')
+
 
 
 
@@ -56,7 +61,7 @@ scl_connect('MSCS')
 print_keyring_connections() %>% clipr::write_clip()
 
 # re-installing rscl to get updated version
-devtools::install_github("Seattle-City-Light/rSCL")
+devtools::install_github("Seattle-City-Light/rSCL@Main")
 
 library('rscl')
 
