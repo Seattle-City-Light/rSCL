@@ -16,15 +16,12 @@ print_keyring_connections()
 # Example of deleting and adding a keyring connection to the keyring manager
 delete_keyring_connection('MATTHEW', 'MSCS')
 
-add_keyring_connection()
-
 add_keyring_connection(user = 'MATTHEW',
-                       database = 'EPMMART_RW',
-                       server = "jdbc:oracle:thin:@//lvsp131.light.ci.seattle.wa.us:1557/EPMMARTP",
-                       jdbc_driver_path = 'N:/APPS/Oracle11g64/jdbc/lib/ojdbc6.jar',
-                       keyring_service = "FPU_STAT",
+                       database = 'MSCS',
+                       server = "https://us-ashburn-1.utilities-cloud.oracleindustry.com/c898w8/prod/msc/sql/rest",
+                       keyring_service = "MSCS",
                        keyring_name = 'MH',
-                       keyring_username = "hamlinm_rw",
+                       keyring_username = "matthew.hamlin@seattle.gov",
                        keyring_password = "")
 
 
@@ -47,8 +44,6 @@ scl_connect('ACCELA')
 # credentials are returned for in script rest API queries.
 scl_connect('MSCS')
 
-
-scl_connect('EPMMART_RW')
 
 
 

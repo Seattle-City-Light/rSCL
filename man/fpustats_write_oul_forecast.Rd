@@ -7,8 +7,6 @@
 fpustats_write_oul_forecast(
   forecast_path =
     "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OUL/2026 OUL Forecast.xlsx",
-  user = "MATTHEW",
-  database = "EPMMART_RW",
   connect = T
 )
 }

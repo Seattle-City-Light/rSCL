@@ -7,14 +7,12 @@
 #' @return Writes forecast to FPUSTATS OUL_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(oul_forecast$FORECAST_VINTAGE)
 #' @export
 fpustats_write_oul_forecast <- function(forecast_path = "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OUL/2026 OUL Forecast.xlsx",
-                                        user = 'MATTHEW',
-                                        database = 'EPMMART_RW',
                                         connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
   oul_forecast <- readxl::read_xlsx(forecast_path)
@@ -63,11 +61,9 @@ fpustats_write_oul_forecast <- function(forecast_path = "I:/FINANCE/FPU/Sales an
 #' @export
 fpustats_delete_oul_forecast <- function(forecast_vintage = 2026,
                                          eff_dt = '2026-02-10',
-                                         connect = T,
-                                         user = 'MATTHEW',
-                                         database = 'EPMMART_RW'){
+                                         connect = T){
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
 

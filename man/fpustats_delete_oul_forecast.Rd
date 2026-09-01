@@ -7,9 +7,7 @@
 fpustats_delete_oul_forecast(
   forecast_vintage = 2026,
   eff_dt = "2026-02-10",
-  connect = T,
-  user = "MATTHEW",
-  database = "EPMMART_RW"
+  connect = T
 )
 }
 \arguments{

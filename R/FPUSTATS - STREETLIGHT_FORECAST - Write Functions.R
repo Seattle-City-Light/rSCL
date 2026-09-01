@@ -61,11 +61,9 @@ fpustats_write_streetlight_forecast <- function(forecast_path = "I:/FINANCE/FPU/
 #' @export
 fpustats_delete_streetlight_forecast <- function(forecast_vintage = 2026,
                                                  eff_dt = '2026-02-10',
-                                                 connect = T,
-                                                 user = 'MATTHEW',
-                                                 database = 'EPMMART_RW'){
+                                                 connect = T){
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
 

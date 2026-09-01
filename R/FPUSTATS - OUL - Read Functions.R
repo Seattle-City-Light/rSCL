@@ -12,14 +12,12 @@ fpustats_read_oul_forecast <- function(forecast_vintage = 2026,
                                        year = 2024,
                                        most_eff_dt = T,
                                        read_all = F,
-                                       user = 'MATTHEW',
-                                       database = 'EPMMART_RW',
                                        connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
   query <- "Select* From FPUSTATS.OUL_FORECAST"
