@@ -8,8 +8,6 @@
 fpustats_write_streetlight_forecast(
   forecast_path =
     "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/Streetlights/2026 Streetlight Forecast.xlsx",
-  user = "MATTHEW",
-  database = "EPMMART_RW",
   connect = T
 )
 }

@@ -7,14 +7,12 @@
 #' @return Writes forecast to FPUSTATS STREETLIGHT_FORECAST table and returns print statement "Successfully uploaded forecast vintage", unique(sl_forecast$FORECAST_VINTAGE)
 #' @export
 fpustats_write_streetlight_forecast <- function(forecast_path = "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/Streetlights/2026 Streetlight Forecast.xlsx",
-                                                user = 'MATTHEW',
-                                                database = 'EPMMART_RW',
                                                 connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
   sl_forecast <- readxl::read_xlsx(forecast_path)

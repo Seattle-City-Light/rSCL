@@ -10,8 +10,6 @@ fpustats_read_streetlight_forecast(
   year = 2024,
   most_eff_dt = T,
   read_all = F,
-  user = "MATTHEW",
-  database = "EPMMART_RW",
   connect = T
 )
 }

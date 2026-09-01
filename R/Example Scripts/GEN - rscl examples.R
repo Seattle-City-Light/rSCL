@@ -4,7 +4,7 @@
 # Install Examples
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-devtools::install_github("Seattle-City-Light/rSCL")
+devtools::install_github("Seattle-City-Light/rSCL@Main")
 
 library('rscl')
 
