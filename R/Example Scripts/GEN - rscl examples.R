@@ -44,7 +44,7 @@ scl_connect('ACCELA')
 # credentials are returned for in script rest API queries.
 scl_connect('MSCS')
 
-
+scl_connect('PWMDWP')
 
 
 

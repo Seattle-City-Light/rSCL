@@ -13,7 +13,7 @@ scl_pull_system_load <- function(start_date = '2022-11-01', end_date = '2022-11-
   start_date <- lubridate::ymd(start_date)
   end_date <- lubridate::ymd(end_date)
 
-  scl_connect('ODWP')
+  scl_connect('PWMDWP')
 
   load_dat <- DBI::dbGetQuery(con,
                              paste0("SELECT ACCU.B1, ACCU.B2, ACCU.B3, ACCU.ELEM, ACCU.INFO, ACCU.VALUE, ACCU.ARCHTIME
