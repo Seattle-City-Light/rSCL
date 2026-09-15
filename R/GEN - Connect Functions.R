@@ -113,9 +113,7 @@ connect_ggmap <- function(user = 'MATTHEW'){
 
   keyring::keyring_lock(keyring=creds$KEYRING_NAME)
 
-  print("Connect Successful")
-
-  return()
+  return("Connect Successful")
 
 }
 
@@ -125,7 +123,7 @@ connect_ggmap <- function(user = 'MATTHEW'){
 
 connect_check_valid_db <- function(database = 'cc'){
 
-  valid_db <- c("ODWP",
+  valid_db <- c("PWMDWP",
                 "EPMMART_RO",
                 "MSCS",
                 "CCB",

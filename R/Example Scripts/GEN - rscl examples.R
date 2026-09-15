@@ -17,13 +17,12 @@ print_keyring_connections()
 delete_keyring_connection('MATTHEW', 'MSCS')
 
 add_keyring_connection(user = 'MATTHEW',
-                       database = 'GGMAP',
-                       server = "",
-                       jdbc_driver_path = ""
-                       keyring_service = "GGMAP",
+                       database = 'PWMDWP',
+                       server = "jdbc:oracle:thin:@//lvsp130:1557/pwmdwp",
+                       keyring_service = "PWMDWP",
                        keyring_name = 'MH',
-                       keyring_username = "hamlin.matthew.j@gmail.com",
-                       keyring_password = "")
+                       keyring_username = "Hamlinm",
+                       keyring_password = "Mxch%4sz")
 
 
 
