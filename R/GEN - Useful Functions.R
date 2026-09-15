@@ -110,6 +110,8 @@ create_prem_type_cd_cat <- function(x){
            'COMMER',
            'SHA')
 
+  x <- trimws_custom(x)
+
   data.table::setDT(x)
   x[PREM_TYPE_CD %in% sf,PREM_TYPE := 'SINGLE FAMILY']
   x[PREM_TYPE_CD %in% mf,PREM_TYPE := 'MULTI FAMILY']
