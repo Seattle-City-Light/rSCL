@@ -12,7 +12,6 @@
 #' This function establishes R session connection to databases like
 #' CCB, MSCS, ACCELA, and EPMMART
 #'
-#' @param user Name of user trying to connect to database
 #' @param database Name of database user is trying to connect to
 #' @return Prints if connection was successful or not also will return parameters for db like MSCS
 #' @export
@@ -35,6 +34,10 @@ scl_connect <- function(database = 'CCB') {
   } else if(database %in% c('MSCS')){
 
     return(connect_mscs(user))
+
+  } else if(database %in% c('GGMAP')){
+
+    return(connect_ggmap(user))
 
   } else {
 
@@ -101,6 +104,25 @@ connect_mscs <- function(user = 'MATTHEW'){
 
 
 
+# gets the credentials for the mscs connect since this connection has to be done through a rest API
+connect_ggmap <- function(user = 'MATTHEW'){
+
+  creds <- get_connect_creds(user,'GGMAP')
+
+  ggmap::register_google(key = keyring::key_get(creds$KEYRING_SERVICE, creds$KEYRING_USERNAME, creds$KEYRING_NAME))
+
+  keyring::keyring_lock(keyring=creds$KEYRING_NAME)
+
+  print("Connect Successful")
+
+  return()
+
+}
+
+
+
+
+
 connect_check_valid_db <- function(database = 'cc'){
 
   valid_db <- c("ODWP",
@@ -108,7 +130,8 @@ connect_check_valid_db <- function(database = 'cc'){
                 "MSCS",
                 "CCB",
                 "ACCELA",
-                "EPMMART_RW")
+                "EPMMART_RW",
+                "GGMAP")
 
   if(!database %in% valid_db){
 
