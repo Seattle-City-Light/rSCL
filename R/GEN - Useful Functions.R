@@ -61,3 +61,67 @@ to_sql_list <- function(x){
   paste0("'", as.vector(x), "'", collapse=", ")
 
 }
+
+
+
+
+
+#' @export
+create_prem_type_cd_cat <- function(x){
+
+  if(!'PREM_TYPE_CD' %in% colnames(x)){
+
+    print('Please provide a data.frame with a colname of PREM_TYPE_CD')
+    return()
+
+  }
+
+  sf <- c('SINFAM',
+          'MOBILE',
+          'HSEBT',
+          'ADU',
+          'DADU',
+          'TWNHS',
+          'TRIPLX',
+          'DUPLEX',
+          'QUADPX')
+
+  mf <- c('APT',
+          'CONDO',
+          'BDGHSE',
+          'COMBO')
+
+  com <- c('PORT',
+           'LOCMUN',
+           'MUNI',
+           'CHURCH',
+           'PUBPLC',
+           'SCHOOL',
+           'FEDFAC',
+           'UNIV',
+           'HOTEL',
+           'STATE',
+           'COUNTY',
+           'BUILPREM',
+           'INDUST',
+           'MEDICL',
+           'METFAC',
+           'BDPUBPLC',
+           'COMMER',
+           'SHA')
+
+  data.table::setDT(x)
+  x[PREM_TYPE_CD %in% sf,PREM_TYPE := 'SINGLE FAMILY']
+  x[PREM_TYPE_CD %in% mf,PREM_TYPE := 'MULTI FAMILY']
+  x[PREM_TYPE_CD %in% com,PREM_TYPE := 'COMMERCIAL']
+
+  if(any(!x$PREM_TYPE_CD %in% c(mf,sf,com))){
+
+    print(paste0("These prem types weren't categorized: ",
+                 x[!unique(x$PREM_TYPE_CD) %in% c(mf,sf,com)]$PREM_TYPE_CD))
+
+  }
+
+  return(x)
+
+}

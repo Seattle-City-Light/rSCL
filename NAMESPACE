@@ -2,6 +2,7 @@
 
 export(add_keyring_connection)
 export(create_list_of_vectors_of_specific_size)
+export(create_prem_type_cd_cat)
 export(delete_keyring_connection)
 export(fpustats_delete_average_rates_forecast)
 export(fpustats_delete_oprv_report)

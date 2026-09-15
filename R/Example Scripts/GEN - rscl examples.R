@@ -17,11 +17,11 @@ print_keyring_connections()
 delete_keyring_connection('MATTHEW', 'MSCS')
 
 add_keyring_connection(user = 'MATTHEW',
-                       database = 'MSCS',
-                       server = "https://us-ashburn-1.utilities-cloud.oracleindustry.com/c898w8/prod/msc/sql/rest",
-                       keyring_service = "MSCS",
+                       database = 'EPMMART_RW',
+                       server = "jdbc:oracle:thin:@//lvsp131.light.ci.seattle.wa.us:1557/EPMMARTP",
+                       keyring_service = "FPU_STAT",
                        keyring_name = 'MH',
-                       keyring_username = "matthew.hamlin@seattle.gov",
+                       keyring_username = "hamlinm_rw",
                        keyring_password = "")
 
 

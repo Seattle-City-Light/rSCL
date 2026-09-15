@@ -104,7 +104,7 @@ connect_mscs <- function(user = 'MATTHEW'){
 connect_check_valid_db <- function(database = 'cc'){
 
   valid_db <- c("ODWP",
-                "EPMMART",
+                "EPMMART_RO",
                 "MSCS",
                 "CCB",
                 "ACCELA",
