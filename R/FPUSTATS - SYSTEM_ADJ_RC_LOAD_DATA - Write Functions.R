@@ -9,11 +9,7 @@ fpustats_write_system_adj_rate_class_load <- function(hourly_rate_class_data = d
 
   `%>%` <- dplyr::`%>%`
 
-  rate_codes <- scl_rate_code_descr(T)
-
-  rate_codes <- trimws_custom(rate_codes)
-
-  hourly_rate_class_data <- dplyr::left_join(hourly_rate_class_data,rate_codes)
+  hourly_rate_class_data <- readRDS("I:/FINANCE/FPU/Matthew/Export Dumps/clean_hourly_data.RDS")
 
   hourly_rate_class_data <- hourly_rate_class_data %>%
     dplyr::ungroup() %>%
