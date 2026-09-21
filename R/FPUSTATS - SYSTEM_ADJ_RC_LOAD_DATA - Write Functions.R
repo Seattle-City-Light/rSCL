@@ -13,6 +13,7 @@ fpustats_write_system_adj_rate_class_load <- function(hourly_rate_class_data = d
 
   hourly_rate_class_data <- hourly_rate_class_data %>%
     dplyr::ungroup() %>%
+    dplyr::mutate(FINAL_MWH = FINAL_KWH/1000) %>%
     dplyr::select(DATETIME,RATE_CLASS,SERVICE_AREA, RATE_TYPE,FINAL_KWH) %>%
     dplyr::mutate(EFF_DT = toupper(as.character(format(Sys.Date(),"%d-%b-%y")))) %>%
     dplyr::rename(DATETIME_PT = DATETIME)
