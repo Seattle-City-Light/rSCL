@@ -6,7 +6,7 @@
 #' @param end_date the end date of interest
 #' @return Data frame of system load between the two dates after correcting for the hour ending issue
 #' @export
-scl_pull_system_load <- function(start_date = '2022-11-01', end_date = '2022-11-30'){
+scl_pull_system_load <- function(start_date = '2024-03-01', end_date = '2024-04-01'){
 
   `%>%` <- dplyr::`%>%`
 
@@ -21,7 +21,8 @@ scl_pull_system_load <- function(start_date = '2022-11-01', end_date = '2022-11-
                                    WHERE (ACCU.ARCHTIME BETWEEN TO_DATE('", start_date ,"', 'yyyy/mm/dd') AND TO_DATE('", end_date +lubridate::days(1) ,"', 'yyyy/mm/dd'))
                                    AND ACCU.B1='SCL' AND ACCU.B2='LOAD' AND ACCU.ELEM='AreaSum' AND ACCU.INFO='eacycle'"))
 
-  load_dat$ARCHTIME <- load_dat$ARCHTIME - lubridate::hours(1)
+  load_dat <- load_dat %>%
+    dplyr::mutate(VALUE = dplyr::lead(VALUE,n=1))
 
   load_dat <- load_dat %>%
     dplyr::select(ARCHTIME,VALUE) %>%
@@ -30,7 +31,8 @@ scl_pull_system_load <- function(start_date = '2022-11-01', end_date = '2022-11-
            MWH = VALUE)
 
   load_dat <- load_dat %>%
-    dplyr::filter(lubridate::date(DATETIME) >= start_date)
+    dplyr::filter(lubridate::date(DATETIME) >= start_date) %>%
+    na.omit()
 
   return(load_dat)
 }
