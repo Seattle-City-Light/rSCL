@@ -4,7 +4,7 @@
 \alias{scl_pull_system_load}
 \title{ODWP Query that pulls system load between two dates}
 \usage{
-scl_pull_system_load(start_date = "2022-11-01", end_date = "2022-11-30")
+scl_pull_system_load(start_date = "2024-03-01", end_date = "2024-04-01")
 }
 \arguments{
 \item{start_date}{the start date of interest}

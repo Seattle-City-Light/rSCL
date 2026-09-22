@@ -39,3 +39,37 @@ fpustats_write_system_adj_rate_class_load <- function(hourly_rate_class_data = d
 
   return("Successfully uploaded hourly rate class load data.")
 }
+
+
+
+
+
+
+
+#' This function deletes weather data from the FPUSTATS Database
+#'
+#' @param year Year of the report of interest
+#' @param month Month of the report of interest
+#' @param connect T/F if you want the function to do the connect or not (typically false if looping over multiple reports)
+#' @return Deletes specific year/month from database and returns the print statement "Weather Data for", year,'-',month," has been deleted."
+#' @export
+fpustats_delete_rate_class_load_data <- function(year = 2024,
+                                                 month = 3,
+                                                 connect = T){
+  if(connect){
+    scl_connect('EPMMART_RW')
+  }
+
+
+  query <- paste0("DELETE FROM FPUSTATS.SYSTEM_ADJ_RC_LOAD_DATA WHERE EXTRACT(YEAR FROM DATETIME_PT) = ", year,
+                  " AND EXTRACT(MONTH FROM DATETIME_PT) = ", month)
+
+  RJDBC::dbSendUpdate(con, query)
+
+  if(connect){
+    RJDBC::dbDisconnect(con)
+  }
+
+  return(paste("Rate class load data for", year,'-',month," has been deleted."))
+
+}
