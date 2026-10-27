@@ -2,19 +2,16 @@
 #' This function writes a properly formatted oprv report to the FPUSTATS Database OPRV REPORT table
 #'
 #' @param report_path Directory of the formatted oprv report
-#' @param user Keyring Manager username
-#' @param database Keyring Manager database name
+#' @param connect weither or not you want the function to handle the connection for you
 #' @return Writes report to FPUSTATS OPRV_REPORT table and returns print statement "Successfully uploaded report for", year,'-',month"
 #' @export
 fpustats_write_oprv_report <- function(report_path = 'I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OPRV/OPRV Files/2025-05 OPRV.xlsx',
-                                       user = 'MATTHEW',
-                                       database = 'EPMMART_RW',
                                        connect = T){
 
   `%>%` <- dplyr::`%>%`
 
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
   oprv_report <- readxl::read_xlsx(report_path)
@@ -68,18 +65,14 @@ fpustats_write_oprv_report <- function(report_path = 'I:/FINANCE/FPU/Sales and R
 #' @param month Month of the report of interest
 #' @param eff_dt upload date of the specific report you want to delete
 #' @param connect T/F if you want the function to do the connect or not (typically false if looping over multiple reports)
-#' @param user Keyring Manager username
-#' @param database Keyring Manager database name
 #' @return Deletes specific record from database and returns the print statement "OPRV report for", year,'-',month,"Uploaded on:", eff_dt,"has been deleted."
 #' @export
 fpustats_delete_oprv_report <- function(year = 2025,
                                         month = 5,
                                         eff_dt = '2026-02-03',
-                                        connect = T,
-                                        user = 'MATTHEW',
-                                        database = 'EPMMART_RW'){
+                                        connect = T){
   if(connect){
-    scl_connect(user, database)
+    scl_connect('EPMMART_RW')
   }
 
 

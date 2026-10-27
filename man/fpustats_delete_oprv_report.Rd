@@ -8,9 +8,7 @@ fpustats_delete_oprv_report(
   year = 2025,
   month = 5,
   eff_dt = "2026-02-03",
-  connect = T,
-  user = "MATTHEW",
-  database = "EPMMART_RW"
+  connect = T
 )
 }
 \arguments{
@@ -21,10 +19,6 @@ fpustats_delete_oprv_report(
 \item{eff_dt}{upload date of the specific report you want to delete}
 
 \item{connect}{T/F if you want the function to do the connect or not (typically false if looping over multiple reports)}
-
-\item{user}{Keyring Manager username}
-
-\item{database}{Keyring Manager database name}
 }
 \value{
 Deletes specific record from database and returns the print statement "OPRV report for", year,'-',month,"Uploaded on:", eff_dt,"has been deleted."

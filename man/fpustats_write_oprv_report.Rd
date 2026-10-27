@@ -7,17 +7,13 @@
 fpustats_write_oprv_report(
   report_path =
     "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OPRV/OPRV Files/2025-05 OPRV.xlsx",
-  user = "MATTHEW",
-  database = "EPMMART_RW",
   connect = T
 )
 }
 \arguments{
 \item{report_path}{Directory of the formatted oprv report}
 
-\item{user}{Keyring Manager username}
-
-\item{database}{Keyring Manager database name}
+\item{connect}{weither or not you want the function to handle the connection for you}
 }
 \value{
 Writes report to FPUSTATS OPRV_REPORT table and returns print statement "Successfully uploaded report for", year,'-',month"
