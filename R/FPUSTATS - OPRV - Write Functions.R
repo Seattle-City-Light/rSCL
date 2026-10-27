@@ -5,7 +5,7 @@
 #' @param connect weither or not you want the function to handle the connection for you
 #' @return Writes report to FPUSTATS OPRV_REPORT table and returns print statement "Successfully uploaded report for", year,'-',month"
 #' @export
-fpustats_write_oprv_report <- function(report_path = 'I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OPRV/OPRV Files/2025-05 OPRV.xlsx',
+fpustats_write_oprv_report <- function(report_path = "I:/FINANCE/FPU/Sales and Revenue Actuals Model/Update Database Scripts/OPRV/OPRV Files/Formatted/2026-06 OPRV.xlsx",
                                        connect = T){
 
   `%>%` <- dplyr::`%>%`
@@ -29,8 +29,6 @@ fpustats_write_oprv_report <- function(report_path = 'I:/FINANCE/FPU/Sales and R
   oprv_report <- oprv_report %>%
     dplyr::select(YEAR,MONTH,CLASS, RATE_CODE_GRP,QTY_TYPE,QTY_VALUE) %>%
     dplyr::mutate(EFF_DT = toupper(as.character(format(Sys.Date(),"%d-%b-%y"))))
-
-  scl_connect(user, database)
 
   for(i in seq(1,nrow(oprv_report))){
 
